@@ -9,4 +9,6 @@
                  [org.slf4j/slf4j-jdk14 "1.6.1"]
                  [twitter-api "0.4.0"]]
   :dev-dependencies [[swank-clojure "1.4.0-SNAPSHOT"] 
-                     [clojure-source "1.2.0"]])
+                     [clojure-source "1.2.0"]
+                     [midje "1.2.0"]
+                     [lein-midje "1.0.3"]])
