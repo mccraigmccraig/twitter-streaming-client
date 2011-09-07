@@ -20,10 +20,10 @@ All that is left is to create a connection and do something with the tweets that
       (:require [twitter-streaming-client :as client]
                 [twitter.oauth :as oauth]))
 
-    (def consumer-key "")
-    (def consumer-secret "")
-    (def user-access-token "")
-    (def user-access-token-secret "")
+    (def consumer-key "<insert-key-here>")
+    (def consumer-secret "<insert-secret-here>")
+    (def user-access-token "<insert-token-here>")
+    (def user-access-token-secret "<insert-more-secrets-here>")
 
     (def creds (oauth/make-oauth-creds consumer-key consumer-secret
                                        user-access-token user-access-token-secret)
