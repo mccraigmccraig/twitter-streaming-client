@@ -128,10 +128,10 @@
    one of :tweet, :delete, :scrub_geo, :limit or :unknown"
   [message]
   (cond
+   (contains? message :text) :tweet
    (contains? message :delete) :delete
    (contains? message :scrub_geo) :scrub_geo
    (contains? message :limit) :limit
-   (contains? message :text) :tweet
    true :unknown))
 
 (defn messages-by-type
