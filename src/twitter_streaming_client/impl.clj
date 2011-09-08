@@ -13,6 +13,7 @@
    [http.async.client :as ac]
    [http.async.client.util :as acutil]
    [twitter.oauth :as oauth]
+   twitter.api.streaming
    [twitter.callbacks :as callbacks]
    [twitter.callbacks.handlers :as handlers])
   (:import
