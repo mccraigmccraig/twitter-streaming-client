@@ -154,6 +154,9 @@
   (->> body
        (str/split-lines)
        (filter (comp (fn [i] (> i 0)) count str/trim))
+       ((fn [lines]
+          (log/info (strint/<< "received ~(count lines) message lines"))
+          lines))
        (map json/read-json)
        (messages-by-type)))
 
