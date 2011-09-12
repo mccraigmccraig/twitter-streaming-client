@@ -1,6 +1,9 @@
 (ns twitter-streaming-client.test.impl
   (:use twitter-streaming-client.impl
         midje.sweet)
+  (:require [clojure.contrib.json :as json]
+            [clojure.string :as str]
+            )
   (:import (org.joda.time Instant Duration)))
 
 
@@ -15,14 +18,19 @@
 (fact (message-type {:scrub_geo {:user_id 1234}}) => :scrub_geo)
 (fact (message-type {:blah "blah"}) => :unknown)
 
+(def some-messages [{:text "foo"} 
+                   {:delete {:status {:id 1234}}}
+                   {:text "bar"}
+                   {:limit {:track 1234}}
+                   {:text "boo"}])
+
+(def some-messages-by-type {:tweet [{:text "foo"} {:text "bar"} {:text "boo"}]
+                            :delete [{:delete {:status {:id 1234}}}]
+                            :limit [{:limit {:track 1234}}]})
+
 ;; gathering messages by type
-(fact (messages-by-type [{:text "foo"} 
-                         {:delete {:status {:id 1234}}}
-                         {:text "bar"}
-                         {:limit {:track 1234}}
-                         {:text "boo"}]) => {:tweet [{:text "foo"} {:text "bar"} {:text "boo"}]
-                                             :delete [{:delete {:status {:id 1234}}}]
-                                             :limit [{:limit {:track 1234}}]})
+(fact (messages-by-type some-messages) => some-messages-by-type)
 
 
 ;; parse-twitter-stream-bodyparts
+(fact (parse-twitter-stream-bodyparts (str/join "\n" (map json/json-str some-messages))) => some-messages-by-type)

@@ -11,4 +11,5 @@
   :dev-dependencies [[swank-clojure "1.4.0-SNAPSHOT"] 
                      [clojure-source "1.2.0"]
                      [midje "1.2.0"]
-                     [lein-midje "1.0.3"]])
+                     [lein-midje "1.0.3"]
+                     [lein-clojars "0.6.0"]])
