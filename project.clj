@@ -7,7 +7,7 @@
                  [joda-time "1.6.2"]
                  [org.slf4j/slf4j-api "1.6.1"]
                  [org.slf4j/slf4j-jdk14 "1.6.1"]
-                 [twitter-api "0.4.0"]]
+                 [twitter-api "0.5.0"]]
   :dev-dependencies [[swank-clojure "1.4.0-SNAPSHOT"] 
                      [clojure-source "1.2.0"]
                      [midje "1.2.0"]
