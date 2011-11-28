@@ -17,7 +17,7 @@ All that is left is to create a connection and do something with the tweets that
 
 
     (ns foo
-      (:require [twitter-streaming-client :as client]
+      (:require [twitter-streaming-client.core :as client]
                 [twitter.oauth :as oauth]))
 
     (def consumer-key "<insert-key-here>")
@@ -26,11 +26,11 @@ All that is left is to create a connection and do something with the tweets that
     (def user-access-token-secret "<insert-more-secrets-here>")
 
     (def creds (oauth/make-oauth-creds consumer-key consumer-secret
-                                       user-access-token user-access-token-secret)
+                                       user-access-token user-access-token-secret))
 
     ;; create the client with a twitter.api streaming method and params of your choice
     (def stream  (client/create-twitter-stream twitter.api.streaming/statuses-filter
-                                               :oauth-creds creds :params {:track "kittens"})
+                                               :oauth-creds creds :params {:track "kittens"}))
 
     ;; fire up the client and start collecting tweets and other messages
     (client/start-twitter-stream stream)
