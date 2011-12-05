@@ -2,14 +2,14 @@
   "an asynchronous client for the twitter streaming api, using twitter.api.streaming
    for Twitter Streaming API calls, and adding support for recovery and retry and batch
    processing of results"
+  (:use clojure.tools.macro)
   (:require 
-   [clojure.contrib.def :as def]
    [clojure.string :as str]
    [clojure.set :as set]
-   [clojure.contrib.json :as json]
-   [clojure.contrib.logging :as log]
-   [clojure.contrib.strint :as strint]
-   [clj-stacktrace.repl :as st]
+   [clojure.stacktrace :as st]
+   [clojure.data.json :as json]
+   [clojure.tools.logging :as log]
+   [clojure.core.strint :as strint]
    [http.async.client :as ac]
    [http.async.client.util :as acutil]
    [twitter.oauth :as oauth]
@@ -21,6 +21,10 @@
    (twitter.callbacks.protocols AsyncStreamingCallback)
    (org.joda.time Instant Duration)))
 
+(defn stack-trace-str
+  [e]
+  (with-out-str (st/print-cause-trace e)))
+
 (defmacro with-warnings 
   "evaluates forms. catches, logs and rethrows any
    exceptions generated while evaluating forms"
@@ -28,14 +32,13 @@
   `(try 
      ~@forms
      (catch Throwable e#
-;;       (log/warn e#)
-       (log/warn (with-out-str (st/pst e#)))
+       (log/warn (stack-trace-str e#))
        (throw e#))))
 
 (defmacro defaction
   "a defn-, wrapping the body in with-warnings"
   [name & macro-args]
-  (let [[n [p & r]] (def/name-with-attributes name macro-args)]
+  (let [[n [p & r]] (name-with-attributes name macro-args)]
     `(defn ~n ~p (with-warnings ~@r))))
 
 (defmacro ignore-exceptions
@@ -45,7 +48,7 @@
   `(try 
      ~@forms
      (catch Exception e#
-       (log/debug "ignoring Exception" (with-out-str (st/pst e#))))))
+       (log/debug "ignoring Exception" (stack-trace-str e#)))))
 
 ;;; response - the current http.async.client response
 ;;; queues - hash of message-type keyword keyed vectors of decoded JSON tweet stream objects
@@ -234,7 +237,7 @@
       (do
         (log/warn (strint/<< "network failure. failure-count ~{next-failure-count}. backing off ~{next-backoff-ms}ms until ~(.toString next-connection-time)"))
         (log/warn (print-response-str response))
-        (log/warn (with-out-str (st/pst throwable)))
+        (log/warn (stack-trace-str throwable))
         (send-off twitter-stream-agent start-twitter-stream-action (:request-fn (meta twitter-stream-agent)) :force? false)
         (assoc twitter-stream
           :response nil
@@ -268,7 +271,7 @@
           response (:response @state)
           new-state (assoc state :response nil)]
       (log/warn "error on twitter-stream-agent. clearing actions and restarting")
-      (log/warn (with-out-str (st/pst throwable)))
+      (log/warn (stack-trace-str throwable))
       (if response (cancel-http-async-client-response response))
       (restart-agent twitter-stream-agent new-state :clear-actions true)
       (send-off twitter-stream-agent start-twitter-stream-action (:request-fn (meta twitter-stream-agent)) :force? false))))

@@ -1,9 +1,8 @@
 (ns twitter-streaming-client.test.impl
   (:use twitter-streaming-client.impl
         midje.sweet)
-  (:require [clojure.contrib.json :as json]
-            [clojure.string :as str]
-            )
+  (:require [clojure.data.json :as json]
+            [clojure.string :as str])
   (:import (org.joda.time Instant Duration)))
 
 
