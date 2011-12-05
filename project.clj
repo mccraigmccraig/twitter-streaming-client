@@ -1,4 +1,4 @@
-(defproject twitter-streaming-client "0.1.3-SNAPSHOT"
+(defproject twitter-streaming-client "0.2.0-SNAPSHOT"
   :description "a clojure based client for Twitter's streaming API"
   :url "https://github.com/trampoline/twitter-streaming-client"
   :dependencies [
