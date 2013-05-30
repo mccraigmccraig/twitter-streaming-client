@@ -225,7 +225,7 @@
       (do
         (log/warn (<< "network failure. failure-count ~{next-failure-count}. backing off ~{next-backoff-ms}ms until ~(.toString next-connection-time)"))
         (log/warn (print-response-str response))
-        (log/warn (stack-trace-str throwable))
+        (log/warn throwable "twitter streaming failure")
         (send-off twitter-stream-agent start-twitter-stream-action (:request-fn (meta twitter-stream-agent)) :force? false)
         (assoc twitter-stream
           :response nil
@@ -259,7 +259,7 @@
           response (:response @state)
           new-state (assoc state :response nil)]
       (log/warn "error on twitter-stream-agent. clearing actions and restarting")
-      (log/warn (stack-trace-str throwable))
+      (log/warn throwable "error on twitter-stream-agent")
       (if response (cancel-http-async-client-response response))
       (restart-agent twitter-stream-agent new-state :clear-actions true)
       (send-off twitter-stream-agent start-twitter-stream-action (:request-fn (meta twitter-stream-agent)) :force? false))))
