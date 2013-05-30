@@ -1,4 +1,4 @@
-(ns twitter-streaming-client.test.impl
+(ns twitter-streaming-client.impl-test
   (:use twitter-streaming-client.impl
         midje.sweet)
   (:require [clojure.data.json :as json]
@@ -7,7 +7,7 @@
 
 
 ;; clear-failure
-(fact (clear-failure {:failure-count 1 :last-backoff-ms 100 :next-connection-time (Instant.)}) => 
+(fact (clear-failure {:failure-count 1 :last-backoff-ms 100 :next-connection-time (Instant.)}) =>
   {:failure-count nil :last-backoff-ms nil :next-connection-time nil})
 
 ;; message-type parsing
@@ -17,7 +17,7 @@
 (fact (message-type {:scrub_geo {:user_id 1234}}) => :scrub_geo)
 (fact (message-type {:blah "blah"}) => :unknown)
 
-(def some-messages [{:text "foo"} 
+(def some-messages [{:text "foo"}
                    {:delete {:status {:id 1234}}}
                    {:text "bar"}
                    {:limit {:track 1234}}
