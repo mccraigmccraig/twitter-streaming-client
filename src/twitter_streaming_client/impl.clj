@@ -7,7 +7,6 @@
   (:require
    [clojure.string :as str]
    [clojure.set :as set]
-   [clojure.stacktrace :as st]
    [clojure.data.json :as json]
    [clojure.tools.logging :as log]
    [http.async.client :as ac]
@@ -21,10 +20,6 @@
    (org.joda.time Instant Duration)
    (clojure.lang IPending)))
 
-(defn stack-trace-str
-  [e]
-  (with-out-str (st/print-cause-trace e)))
-
 (defmacro with-warnings
   "evaluates forms. catches, logs and rethrows any
    exceptions generated while evaluating forms"
@@ -32,7 +27,7 @@
   `(try
      ~@forms
      (catch Throwable e#
-       (log/warn (stack-trace-str e#))
+       (log/warn e# "exception during streaming action")
        (throw e#))))
 
 (defmacro defaction
@@ -48,7 +43,7 @@
   `(try
      ~@forms
      (catch Exception e#
-       (log/debug "ignoring Exception" (stack-trace-str e#)))))
+       (log/warn e# "ignoring Exception"))))
 
 ;;; response - the current http.async.client response
 ;;; queues - hash of message-type keyword keyed vectors of decoded JSON tweet stream objects
