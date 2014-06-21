@@ -175,10 +175,12 @@
   [twitter-stream response body]
   (if (and (realized? (:status response))
            (= (:code @(:status response)) 200))
+    (do
+      (log/info (<< "received chunk of length ~(count body)"))
       (process-chunk twitter-stream body))
     (do
       (log/warn "ignoring body from incomplete or failed request")
-      twitter-stream))
+      twitter-stream)))
 
 (defn create-enqueue-on-bodypart-handler
   "twitter-api on-bodypart handler : sends enqueue-bodypart-action"
