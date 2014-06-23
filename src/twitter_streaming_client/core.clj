@@ -12,7 +12,7 @@
    method - a twitter.api.streaming method
    other-params - for the twitter.api.streaming method, e.g. :oauth-creds, :params etc"
   [method & other-params]
-  (let [twitter-stream-agent (agent (twitter_streaming_client.impl.TwitterStream. :stopped {} nil nil nil nil)
+  (let [twitter-stream-agent (agent (twitter_streaming_client.impl.TwitterStream. :stopped {} "" nil nil nil nil)
 ;;                                    :error-handler twitter-stream-agent-error-handler
                                     )
         callbacks (async-streaming-callbacks twitter-stream-agent)

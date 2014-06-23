@@ -53,6 +53,7 @@
 (defrecord TwitterStream
     [state ;; one of : [:runnable, :stopped]
      queues
+     partial
      response
      failure-count
      last-backoff-ms
@@ -151,17 +152,32 @@
        (map json/read-json)
        (messages-by-type)))
 
+(defn process-tweet
+  [twitter-stream tweet]
+      (-> twitter-stream
+      (clear-failure)
+      (assoc :queues (merge-with into
+                                 (:queues twitter-stream)
+                                 (parse-twitter-stream-bodyparts tweet)))))
+
+(defn process-chunk
+  [twitter-stream chunk]
+        (let
+            [known-plus-new (str (:partial twitter-stream) chunk)
+             tweets (clojure.string/split known-plus-new #"\r\n" -1)
+             complete (subvec tweets 0 (dec (count tweets)))
+             new-partial (last tweets)]
+            (reduce process-tweet (assoc twitter-stream :partial new-partial) complete)))
+
 (defaction enqueue-bodypart-action
   "if the status is delivered? and 200, then
    clear failures, and append received messages to the queues"
   [twitter-stream response body]
   (if (and (realized? (:status response))
            (= (:code @(:status response)) 200))
-    (-> twitter-stream
-        (clear-failure)
-        (assoc :queues (merge-with into
-                                   (:queues twitter-stream)
-                                   (parse-twitter-stream-bodyparts body))))
+    (do
+      (log/info (<< "received chunk of length ~(count body)"))
+      (process-chunk twitter-stream body))
     (do
       (log/warn "ignoring body from incomplete or failed request")
       twitter-stream)))
@@ -170,7 +186,7 @@
   "twitter-api on-bodypart handler : sends enqueue-bodypart-action"
   [twitter-stream-agent]
   (fn [response baos]
-    (let [body (str baos)]
+    (let [body (.toString baos "UTF-8")]
       (send-off twitter-stream-agent enqueue-bodypart-action response body))))
 
 (defaction empty-queues-action
