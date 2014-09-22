@@ -5,7 +5,7 @@
 twitter-streaming-client builds an asynchronous [Clojure](http://clojure.org) client for the Twitter Streaming API on
 top of [twitter-api](https://github.com/adamwynne/twitter-api)
 
-it manages the connection and deals with problems as specified in the [Twitter Streaming API documentation](https://dev.twitter.com/docs/streaming-api/concepts#connecting). In particular it manages :
+it manages the connection and deals with problems as specified in the [Twitter Streaming API documentation](https://dev.twitter.com/streaming/overview/connecting). In particular it manages :
 
 * protocol errors with exponential backoff before retry
 * network errors with linear backoff before retry
